@@ -1,9 +1,14 @@
 import streamlit as st
 from pymongo import MongoClient
+from core.auth import require_login
+from core.session import init_session
+
+init_session()
+require_login()
 
 st.set_page_config(page_title="Historique")
 
-class HistoriqueManager:
+class Gestion_hist:
     def __init__(self):
         self.uri = "mongodb://localhost:27017/"
         self.client = MongoClient(self.uri)
@@ -28,7 +33,7 @@ class HistoriqueManager:
         """Affiche tous les jobs dans l'historique"""
         hist = self.historique.find()
         for h in hist:
-            with st.container():
+            with st.container(border=True):
                 st.write(f"**Titre:** {h.get('Job', '')}")
                 st.write(f"**Date execution:** {h.get('date execution', '')}")
                 erreur = h.get('erreur', '')
@@ -42,6 +47,7 @@ if st.button("Accueil"):
 
 st.header("Historique des Jobs")
 
-historique_manager = HistoriqueManager()
-historique_manager.effacer_historique()
-historique_manager.afficher_historique()
+hist = Gestion_hist()
+hist.afficher_historique()
+hist.effacer_historique()
+

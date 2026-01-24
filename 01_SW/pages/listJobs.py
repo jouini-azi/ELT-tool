@@ -5,6 +5,11 @@ import os
 from datetime import datetime
 from pymongo import MongoClient
 from apscheduler.schedulers.background import BackgroundScheduler
+from core.auth import require_login
+from core.session import init_session
+
+init_session()
+require_login()
 
 st.set_page_config(page_title="Jobs")
 
@@ -114,6 +119,7 @@ class JobManager:
                 if supp:
                     self.collection.delete_one({"_id": j['_id']})
                     st.success(f"{j['titre']} supprimé avec succès !")
+                    st.rerun()
 
     def planifier_job(self, j, dt, choix):
         """Planifie un job avec APScheduler"""
@@ -129,9 +135,7 @@ class JobManager:
         elif choix == "chaque semaine":
             self.scheduler.add_job(self.executer, trigger="interval", weeks=1, start_date=dt, args=[j], id=job_id)
         elif choix == "chaque mois":
-            self.scheduler.add_job(
-                self.executer, trigger="cron", day=dt.day, hour=dt.hour, minute=dt.minute, args=[j], id=job_id
-            )
+            self.scheduler.add_job(self.executer, trigger="cron", day=dt.day, hour=dt.hour, minute=dt.minute, args=[j], id=job_id)
 
 # ==================== MAIN ====================
 job_manager = JobManager()

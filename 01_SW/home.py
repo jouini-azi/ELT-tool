@@ -1,6 +1,15 @@
 import streamlit as st
+from core.auth import require_login
+from core.session import init_session
+
+init_session()
+require_login()
 
 st.set_page_config(page_title="Accueil")
+if st.button("Déconnexion"):
+    for key in list(st.session_state.keys()):
+        del st.session_state[key]
+    st.switch_page("pages/login.py")
 st.header("Bienvenue")
 col1, col2, col3= st.columns([1,1,1])
 with col1:

@@ -1,9 +1,13 @@
 import streamlit as st
 import mysql.connector
 import pandas as pd
-import os
-from pymongo import MongoClient
 from pages.JOB_new import JobManager
+from core.auth import require_login
+from core.session import init_session
+
+init_session()
+require_login()
+
 st.set_page_config(page_title="Transformations",layout="wide")
 
 col1, col2, col3, col4, col5= st.columns([1,1,1,1,1])
@@ -17,8 +21,9 @@ with col4:
   st.button("test4")
 with col5:
   st.button("test5")
-
-JobManager.executer()
+  
+job=JobManager()
+job.executer()
 
 #if st.session_state.get("df") is not None:
  # st.dataframe(st.session_state["df"])
