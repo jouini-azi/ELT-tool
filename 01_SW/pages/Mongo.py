@@ -2,7 +2,7 @@
 from pymongo import MongoClient
 
 class MongoDB:
-  def init_mongo(self):
+  def connect_to_mongodb(self):
     """Connexion à MongoDB"""
     try:
         self.uri = "mongodb://localhost:27017/"
@@ -10,5 +10,10 @@ class MongoDB:
         self.db = self.client.app
         self.collection = self.db.test_job
         self.hist = self.db.historique
+        return self.uri , self.client , self.db , self.collection , self.hist
     except Exception:
         self.client=None
+
+
+class Mysql:
+  pass

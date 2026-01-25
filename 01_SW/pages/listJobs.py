@@ -142,6 +142,5 @@ job_manager = JobManager()
 
 if st.button("Accueil"):
     st.switch_page("home.py")
-
 st.header("Jobs")
 job_manager.display_jobs()

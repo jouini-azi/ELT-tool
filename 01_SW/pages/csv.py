@@ -8,7 +8,7 @@ from core.db import get_connection
 from core.db import generate_create_table
 from core.commun import commun
 from pages.Mongo import MongoDB
-########################* DONE ! *#################################
+
 
 init_session()
 require_login()
@@ -24,7 +24,7 @@ class csvFile(commun):
         self.host = st.session_state.get("host", "")
         self.table = st.session_state.get("table", "")
         self.sql = st.session_state.get("sql", "")
-        MongoDB().init_mongo()
+        self.uri , self.client , self.db , self.collection , self.hist = MongoDB().connect_to_mongodb()
 
     def render_inputs(self):
             """Affichage des inputs Streamlit"""
