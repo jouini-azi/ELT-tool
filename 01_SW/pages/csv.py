@@ -19,7 +19,7 @@ class csvFile(commun):
         self.df = st.session_state.get("df", pd.DataFrame())
         self.selected = st.session_state.get("selected", pd.DataFrame())
         self.titre = st.session_state.get("titre", "")
-        self.file = st.session_state.get("file", "")
+        self.path = st.session_state.get("file", "")
         self.dbName = st.session_state.get("dbName", "")
         self.host = st.session_state.get("host", "")
         self.table = st.session_state.get("table", "")
@@ -27,56 +27,33 @@ class csvFile(commun):
         self.uri , self.client , self.db , self.collection , self.historique = MongoDB().connect_to_mongodb()
 
     def render_inputs(self):
-            """Affichage des inputs Streamlit"""
-            col1, col2 = st.columns([3,1])
-            with col1:
-                self.titre = st.text_input("Titre")
-                self.file = st.text_input("Path copmplet du ficher(.csv)")         
-                self.dbName = st.text_input("Nom de la base")
-                self.host = st.text_input("host")
-                self.table = st.text_input("Nom de la table")
-                self.files = pd.DataFrame()
-            with col2:
-                st.title("Requetes SQL")
-                self.sql = st.text_area(
-                    'Entrez vos requetes SQL (precedées par " - " ) ',
-                    height=260
-                )
-            st.session_state["titre"] = self.titre
-            st.session_state["file"] = self.file
-            st.session_state["dbName"] = self.dbName
-            st.session_state["host"] = self.host
-            st.session_state["table"] = self.table
-            st.session_state["sql"] = self.sql
+        """Affichage des inputs Streamlit"""
+        col1, col2 = st.columns([3,1])
+        with col1:
+            self.titre = st.text_input("Titre")
+            self.path = st.text_input("Path copmplet du ficher(.csv)")
+            self.dbName = st.text_input("Nom de la base")
+            self.host = st.text_input("host")
+            self.table = st.text_input("Nom de la table")
+        with col2:
+            st.title("Requetes SQL")
+            self.sql = st.text_area(
+                'Entrez vos requetes SQL (precedées par " - " ) ',
+                height=260
+            )
+        st.session_state["titre"] = self.titre
+        st.session_state["file"] = self.path
+        st.session_state["dbName"] = self.dbName
+        st.session_state["host"] = self.host
+        st.session_state["table"] = self.table
+        st.session_state["sql"] = self.sql
+        
+        return self.titre , self.path , self.dbName , self.host , self.table , self.sql
 
-
-    def ajouter_job(self):
-        """Ajouter un job dans MongoDB"""
-        if st.button("Ajouter Job"):
-            try:
-                self.client.admin.command('ping')
-            except Exception as e:
-                st.error(f"Erreur MongoDB : {e}")
-                return
-            
-            if self.titre and self.file and self.dbName and self.host and self.table:
-                req = self.sql.split("-")[1:]  # On supprime le premier élément vide
-                resultat = self.collection.insert_one({
-                    "titre": self.titre,
-                    "path": self.file,
-                    "db": self.dbName,
-                    "host": self.host,
-                    "table": self.table,
-                    "requete": req
-                })
-                if resultat.inserted_id:
-                    st.success(f"Job '{self.titre}' ajouté")
-            else:
-                st.warning("Veuillez remplir tous les champs correctement !")
   
     def executer(self):        
         if st.button("Envoyer vers MySQL"):
-            if not os.path.exists(self.file):  # check if the path exists
+            if not os.path.exists(self.path):  # check if the path exists
                 st.error("File does not exist. Check the path.")
                 return
             try:
@@ -155,10 +132,10 @@ obj = csvFile()
 if st.button("Accueil"):
     st.switch_page("home.py")
 st.set_page_config(page_title="Import CSV vers MySQL")
-
 st.title("CSV vers MySQL")
-obj.render_inputs()
-obj.ajouter_job()
+
+titre, path , dbName ,host , table , requette_sql =obj.render_inputs()
+MongoDB().ajouter_job(titre, path , dbName ,host , table , requette_sql)
 obj.executer()
 obj.display_table()
 obj.supprimer_lignes()

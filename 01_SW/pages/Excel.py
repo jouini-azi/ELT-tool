@@ -38,7 +38,6 @@ class excelFile(commun):
             self.dbName = st.text_input("Nom de la base")
             self.host = st.text_input("host")
             self.table = st.text_input("Nom de la table")
-            self.files = pd.DataFrame()
         with col2:
             st.title("Requetes SQL")
             self.sql = st.text_area(
@@ -138,8 +137,8 @@ if st.button("Accueil"):
 
 
 st.title("Excel vers MySQL")
-obj.render_inputs()
-obj.ajouter_job()
+titre, path , dbName ,host , table , requette_sql  = obj.render_inputs()
+MongoDB().ajouter_job(titre, path , dbName ,host , table , requette_sql)
 obj.executer()
 obj.display_table()
 obj.supprimer_lignes()

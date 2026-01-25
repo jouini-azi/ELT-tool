@@ -43,30 +43,7 @@ class JobManager(commun):
                 'Entrez vos requetes SQL (precedées par " - " ) ',
                 height=260
             )
-    
-    def ajouter_job(self):
-        """Ajouter un job dans MongoDB"""
-        if st.button("Ajouter Job"):
-            try:
-                self.client.admin.command('ping')
-            except Exception as e:
-                st.error(f"Erreur MongoDB : {e}")
-                return
-            
-            if self.titre and self.path_doss and self.dbName and self.host and self.table:
-                req = self.sql.split("-")[1:]  # On supprime le premier élément vide
-                resultat = self.collection.insert_one({
-                    "titre": self.titre,
-                    "path": self.path_doss,
-                    "db": self.dbName,
-                    "host": self.host,
-                    "table": self.table,
-                    "requete": req
-                })
-                if resultat.inserted_id:
-                    st.success(f"Job '{self.titre}' ajouté")
-            else:
-                st.warning("Veuillez remplir tous les champs correctement !")
+        return self.titre , self.path , self.dbName , self.host , self.table , self.sql
     
     def executer(self):
       """Exécuter le job (Excel folder only)"""
@@ -147,8 +124,8 @@ job_manager = JobManager()
 if st.button("Accueil"):
     st.switch_page("home.py")
 st.header("Excel vers MySQL (dossier)")
-job_manager.render_inputs()
-job_manager.ajouter_job()
+titre, path , dbName ,host , table , requette_sql  = job_manager.render_inputs()
+MongoDB().ajouter_job(titre, path , dbName ,host , table , requette_sql)
 job_manager.executer()
 job_manager.display_table()
 job_manager.supprimer_lignes()
