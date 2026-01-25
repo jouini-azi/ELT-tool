@@ -14,12 +14,12 @@ class MongoDB:
     except Exception:
         self.client=None
 
-  def ajouter_job(self,titre, path , dbName ,host , table , requette_sql):
+  def ajouter_job(self,titre, path , dbName ,host , table , requette_sql,collection):
     """Ajouter un job dans MongoDB"""
     if st.button("Ajouter Job"):
         if titre and path and dbName and host and table:
             req = requette_sql.split("-")[1:]
-            resultat = self.collection.insert_one({
+            resultat = collection.insert_one({
                 "titre": titre,
                 "path": path,
                 "db": dbName,

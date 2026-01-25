@@ -34,36 +34,25 @@ class excelFile(commun):
         col1, col2 = st.columns([3,1])
         with col1:
             self.titre = st.text_input("Titre")
-            self.file = st.text_input("Path complet du fichier(.xls)")   
+            self.path = st.text_input("Path copmplet du ficher")
             self.dbName = st.text_input("Nom de la base")
             self.host = st.text_input("host")
             self.table = st.text_input("Nom de la table")
         with col2:
             st.title("Requetes SQL")
             self.sql = st.text_area(
-                'Entrez vos requetes SQL (precedées par " - " ) ', height=260
+                'Entrez vos requetes SQL (precedées par " - " ) ',
+                height=260
             )
+        st.session_state["titre"] = self.titre
+        st.session_state["file"] = self.path
+        st.session_state["dbName"] = self.dbName
+        st.session_state["host"] = self.host
+        st.session_state["table"] = self.table
+        st.session_state["sql"] = self.sql
+        
+        return self.titre , self.path , self.dbName , self.host , self.table , self.sql,self.collection
 
-  def ajouter_job(self):
-        if st.button("Ajouter Job"):
-            if not all([self.titre, self.file, self.dbName, self.host, self.table]):
-                st.warning("Veuillez remplir tous les champs")
-                return
-
-            req = self.sql.split("-")[1:] if self.sql else []
-
-            try:
-                self.collection.insert_one({
-                    "titre": self.titre,
-                    "path": self.file,
-                    "db": self.dbName,
-                    "host": self.host,
-                    "table": self.table,
-                    "requete": req
-                })
-                st.success("Job ajouté")
-            except Exception as e:
-                st.error(f"MongoDB erreur : {e}")
 
         
 
@@ -137,8 +126,8 @@ if st.button("Accueil"):
 
 
 st.title("Excel vers MySQL")
-titre, path , dbName ,host , table , requette_sql  = obj.render_inputs()
-MongoDB().ajouter_job(titre, path , dbName ,host , table , requette_sql)
+titre, path , dbName ,host , table , requette_sql,collection  = obj.render_inputs()
+MongoDB().ajouter_job(titre, path , dbName ,host , table , requette_sql,collection)
 obj.executer()
 obj.display_table()
 obj.supprimer_lignes()

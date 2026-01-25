@@ -31,7 +31,7 @@ class JobManager(commun):
         col1, col2 = st.columns([3,1])
         with col1:
             self.titre = st.text_input("Titre")
-            self.path_doss = st.text_input("Chemin complet du dossier")
+            self.path = st.text_input("Chemin complet du dossier")
             self.dbName = st.text_input("Nom de la base")
             self.host = st.text_input("host")
             self.table = st.text_input("Nom de la table")
@@ -41,12 +41,20 @@ class JobManager(commun):
                 'Entrez vos requetes SQL (precedées par " - " ) ',
                 height=260
             )
-        return self.titre , self.path , self.dbName , self.host , self.table , self.sql
+
+        st.session_state["titre"] = self.titre
+        st.session_state["file"] = self.path
+        st.session_state["dbName"] = self.dbName
+        st.session_state["host"] = self.host
+        st.session_state["table"] = self.table
+        st.session_state["sql"] = self.sql
+
+        return self.titre , self.path , self.dbName , self.host , self.table , self.sql, self.collection
     
     def executer(self):
         """Exécuter le job"""
         if st.button("Executer"):
-            if not (self.titre and self.path_doss and self.dbName and self.host and self.table):
+            if not (self.titre and self.path and self.dbName and self.host and self.table):
                 st.warning("Veuillez remplir tous les champs correctement !")
                 st.switch_page("pages/transform.py")
                 return
@@ -56,9 +64,9 @@ class JobManager(commun):
                 cursor = conn.cursor()
                 
                 # Lecture des fichiers CSV
-                for f in os.listdir(self.path_doss):
+                for f in os.listdir(self.path):
                     if f.endswith(".csv"):
-                        self.df = pd.concat([self.df, pd.read_csv(os.path.join(self.path_doss, f))], ignore_index=True)
+                        self.df = pd.concat([self.df, pd.read_csv(os.path.join(self.path, f))], ignore_index=True)
 
                 # Création de la table si nécessaire
                 cursor.execute(
@@ -99,8 +107,8 @@ job_manager = JobManager()
 if st.button("Accueil"):
     st.switch_page("home.py")
 st.header("CSV vers MySQL (dossier)")
-titre, path , dbName ,host , table , requette_sql = job_manager.render_inputs()
-MongoDB().ajouter_job(titre, path , dbName ,host , table , requette_sql)
+titre, path , dbName ,host , table , requette_sql ,collection= job_manager.render_inputs()
+MongoDB().ajouter_job(titre, path , dbName ,host , table , requette_sql, collection)
 job_manager.executer()
 job_manager.display_table()
 job_manager.supprimer_lignes()

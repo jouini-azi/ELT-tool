@@ -48,7 +48,7 @@ class csvFile(commun):
         st.session_state["table"] = self.table
         st.session_state["sql"] = self.sql
         
-        return self.titre , self.path , self.dbName , self.host , self.table , self.sql
+        return self.titre , self.path , self.dbName , self.host , self.table , self.sql,self.collection
 
   
     def executer(self):        
@@ -134,8 +134,9 @@ if st.button("Accueil"):
 st.set_page_config(page_title="Import CSV vers MySQL")
 st.title("CSV vers MySQL")
 
-titre, path , dbName ,host , table , requette_sql =obj.render_inputs()
-MongoDB().ajouter_job(titre, path , dbName ,host , table , requette_sql)
+titre, path , dbName ,host , table , requette_sql ,collection=obj.render_inputs()
+
+MongoDB().ajouter_job(titre, path , dbName ,host , table , requette_sql,collection)
 obj.executer()
 obj.display_table()
 obj.supprimer_lignes()
