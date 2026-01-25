@@ -7,7 +7,7 @@ from core.session import init_session
 from core.db import get_connection
 from core.db import generate_create_table
 from core.commun import commun
-from pages.Mongo import MongoDB
+from Functions.databases import MongoDB
 
 
 init_session()
@@ -24,7 +24,7 @@ class csvFile(commun):
         self.host = st.session_state.get("host", "")
         self.table = st.session_state.get("table", "")
         self.sql = st.session_state.get("sql", "")
-        self.uri , self.client , self.db , self.collection , self.hist = MongoDB().connect_to_mongodb()
+        self.uri , self.client , self.db , self.collection , self.historique = MongoDB().connect_to_mongodb()
 
     def render_inputs(self):
             """Affichage des inputs Streamlit"""
@@ -114,13 +114,13 @@ class csvFile(commun):
 
 
                     if self.client:
-                        self.hist.insert_one({"Job": self.titre, "date execution": datetime.now(), "erreur": ""})
+                        self.historique.insert_one({"Job": self.titre, "date execution": datetime.now(), "erreur": ""})
                         st.success("Données transférées vers MySQL avec succès !")
 
             except Exception as e:
                 st.error(f"Error reading CSV: {e}")
                 if self.client:
-                    self.hist.insert_one({"Job": self.titre, "date execution": datetime.now(), "erreur": str(e)})
+                    self.historique.insert_one({"Job": self.titre, "date execution": datetime.now(), "erreur": str(e)})
             finally:
                 if 'conn' in locals():
                     cursor.close()

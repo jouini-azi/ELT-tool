@@ -2,7 +2,7 @@ import streamlit as st
 from pymongo import MongoClient
 from core.auth import require_login
 from core.session import init_session
-
+from Functions.databases import MongoDB
 init_session()
 require_login()
 
@@ -10,18 +10,8 @@ st.set_page_config(page_title="Historique")
 
 class Gestion_hist:
     def __init__(self):
-        self.uri = "mongodb://localhost:27017/"
-        self.client = MongoClient(self.uri)
-        self.db = self.client.app
-        self.historique = self.db.historique
-        self.connect_mongo()
+        self.uri , self.client , self.db , self.collection , self.historique = MongoDB().connect_to_mongodb()
 
-    def connect_mongo(self):
-        """Vérifie la connexion à MongoDB"""
-        try:
-            self.client.admin.command('ping')
-        except Exception as e:
-            st.error(f"Erreur MongoDB : {e}")
 
     def effacer_historique(self):
         """Efface tout l'historique"""

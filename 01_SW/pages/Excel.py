@@ -8,7 +8,7 @@ from core.auth import require_login
 from core.session import init_session
 from core.db import generate_create_table
 from core.commun import commun
-from pages.Mongo import MongoDB
+from Functions.databases import MongoDB
 
 st.set_page_config(page_title="Import Excel vers MySQL")
 
@@ -19,7 +19,7 @@ class excelFile(commun):
   def __init__(self):
     self.df = pd.DataFrame()
     self.selected = pd.DataFrame()
-    MongoDB().init_mongo()
+    self.uri , self.client , self.db , self.collection , self.historique = MongoDB().connect_to_mongodb()
     self.init_session()
 
   def init_session(self):
@@ -116,10 +116,10 @@ class excelFile(commun):
             tab["select"] = False
             st.session_state.tab = tab
 
-            self.hist.insert_one({"Job": self.titre, "date execution": datetime.now(), "erreur": ""})
+            self.historique.insert_one({"Job": self.titre, "date execution": datetime.now(), "erreur": ""})
         except Exception as e:
             st.error(f"Erreur : {e}")
-            self.hist.insert_one({"Job": self.titre, "date execution": datetime.now(), "erreur": str(e)})
+            self.historique.insert_one({"Job": self.titre, "date execution": datetime.now(), "erreur": str(e)})
         finally:
             if 'conn' in locals():
                 cursor.close()

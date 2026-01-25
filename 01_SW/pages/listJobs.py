@@ -7,6 +7,7 @@ from pymongo import MongoClient
 from apscheduler.schedulers.background import BackgroundScheduler
 from core.auth import require_login
 from core.session import init_session
+from Functions.databases import MongoDB
 
 init_session()
 require_login()
@@ -17,11 +18,7 @@ class JobManager:
     def __init__(self):
         self.scheduler = BackgroundScheduler()
         self.scheduler.start()
-        self.uri = "mongodb://localhost:27017/"
-        self.client = MongoClient(self.uri)
-        self.db = self.client.app
-        self.collection = self.db.test_job
-        self.hist = self.db.historique
+        self.uri , self.client , self.db , self.collection , self.historique = MongoDB().connect_to_mongodb()
         self.jobs = list(self.collection.find())
 
     def connect_mongo(self):
@@ -61,10 +58,10 @@ class JobManager:
             conn.commit()
         except Exception as e:
             st.error(e.args)
-            self.hist.insert_one({"Job": j['titre'], "date execution": datetime.now(), "erreur": str(e)})
+            self.historique.insert_one({"Job": j['titre'], "date execution": datetime.now(), "erreur": str(e)})
         else:
             st.success(f"{j['titre']} fait !")
-            self.hist.insert_one({"Job": j['titre'], "date execution": datetime.now(), "erreur": ""})
+            self.historique.insert_one({"Job": j['titre'], "date execution": datetime.now(), "erreur": ""})
         finally:
             if 'conn' in locals():
                 cursor.close()

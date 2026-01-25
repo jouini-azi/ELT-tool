@@ -9,8 +9,8 @@ class MongoDB:
         self.client = MongoClient(self.uri)
         self.db = self.client.app
         self.collection = self.db.test_job
-        self.hist = self.db.historique
-        return self.uri , self.client , self.db , self.collection , self.hist
+        self.historique = self.db.historique
+        return self.uri , self.client , self.db , self.collection , self.historique
     except Exception:
         self.client=None
 

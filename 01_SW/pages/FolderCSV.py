@@ -7,7 +7,7 @@ from core.db import get_connection
 from core.auth import require_login
 from core.session import init_session
 from core.commun import commun
-
+from Functions.databases import MongoDB
 
 init_session()
 require_login()
@@ -16,7 +16,7 @@ class JobManager(commun):
     def __init__(self):
         self.df = pd.DataFrame()
         self.selected = pd.DataFrame()
-        self.init_mongo()
+        self.uri , self.client , self.db , self.collection , self.historique = MongoDB().connect_to_mongodb()
         self.init_session()
 
     def init_session(self):
@@ -108,10 +108,10 @@ class JobManager(commun):
                 st.session_state.tab = tab
 
                 st.success(f"Job '{self.titre}' exécuté avec succès !")
-                self.hist.insert_one({"Job": self.titre, "date execution": datetime.now(), "erreur": ""})
+                self.historique.insert_one({"Job": self.titre, "date execution": datetime.now(), "erreur": ""})
             except Exception as e:
                 st.error(f"Erreur : {e}")
-                self.hist.insert_one({"Job": self.titre, "date execution": datetime.now(), "erreur": str(e)})
+                self.historique.insert_one({"Job": self.titre, "date execution": datetime.now(), "erreur": str(e)})
             finally:
                 if 'conn' in locals():
                     cursor.close()
