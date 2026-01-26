@@ -3,18 +3,19 @@ import pandas as pd
 import os
 from pymongo import MongoClient
 from datetime import datetime
-from core.db import get_connection
+from Functions.databases import Mysql
 from core.auth import require_login
 from core.session import init_session
 from core.commun import commun
 from Functions.databases import MongoDB
 from Functions.inputs import inputs
+from pages.job import job
 
 
 init_session()
 require_login()
 
-class JobManager(commun):
+class job_Folder_CSV(job):
     def __init__(self):
         self.df = st.session_state.get("df", pd.DataFrame())
         self.selected = st.session_state.get("selected", pd.DataFrame())
@@ -25,6 +26,7 @@ class JobManager(commun):
         self.table = st.session_state.get("table", "")
         self.sql = st.session_state.get("sql", "")
         self.uri , self.client , self.db , self.collection , self.historique = MongoDB().connect_to_mongodb()
+        
     #def init_session(self):
         #"""Initialisation des states"""
         #if "tab" not in st.session_state:
@@ -43,7 +45,7 @@ class JobManager(commun):
                 return
 
             try:
-                conn = get_connection()
+                conn = Mysql().connect_to_MySQL()
                 cursor = conn.cursor()
                 
                 # Lecture des fichiers CSV
@@ -86,12 +88,13 @@ class JobManager(commun):
 
 
 # ================== MAIN ==================
-job_manager = JobManager()
+csvFolders = job_Folder_CSV()
 if st.button("Accueil"):
     st.switch_page("home.py")
 st.header("CSV vers MySQL (dossier)")
 titre, path , dbName ,host , table , sql= inputs().render_inputs_folder()
-MongoDB().ajouter_job(titre, path , dbName ,host , table , sql, job_manager.collection)
-job_manager.executer()
-job_manager.display_table()
-job_manager.supprimer_lignes()
+if st.button("Ajouter Job"):
+    MongoDB().ajouter_job(job(titre,path,dbName,host,table,sql))
+csvFolders.executer()
+commun().display_table()
+commun().supprimer_lignes()

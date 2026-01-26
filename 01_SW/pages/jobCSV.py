@@ -4,11 +4,13 @@ import os
 from datetime import datetime
 from core.auth import require_login
 from core.session import init_session
-from core.db import get_connection
+from Functions.databases import Mysql
 from core.db import generate_create_table
 from core.commun import commun
 from Functions.databases import MongoDB
 from Functions.inputs import inputs
+from pages.job import job
+
 
 
 
@@ -16,7 +18,7 @@ init_session()
 require_login()
 
 
-class csvFile(commun):
+class csvFile(job):
     def __init__(self):
         self.df = st.session_state.get("df", pd.DataFrame())
         self.selected = st.session_state.get("selected", pd.DataFrame())
@@ -34,7 +36,7 @@ class csvFile(commun):
     def executer(self):        
         if st.button("Envoyer vers MySQL"):
             try:
-                conn = get_connection()
+                conn = Mysql().connect_to_MySQL()
                 cursor = conn.cursor()
                 self.path=self.path+".csv"
                 if self.path:
@@ -80,46 +82,23 @@ class csvFile(commun):
                 if 'conn' in locals():
                     cursor.close()
                     conn.close()   
-
-
-    def display_table(self):
-        """Affichage du tableau éditable et sélection des lignes"""            
-        if st.session_state.tab is not None:
-            self.selected = st.session_state.get("selected", pd.DataFrame())
-
-            edited_tab = st.data_editor(
-                st.session_state.tab,
-                key="table_editor",
-                hide_index=False
-            )
-
-            if not edited_tab.equals(st.session_state.tab):
-                st.session_state.tab = edited_tab
-                st.session_state["selected"] = self.selected
-                st.rerun()
-            # Lignes sélectionnées
-            self.selected = st.session_state.tab[st.session_state.tab["select"]]
-            st.session_state.selected = self.selected
-            st.write("Lignes sélectionnées")                
-            st.write(self.selected)
-
                 
     
 
 
 
-obj = csvFile()
+csvFile = csvFile()
 if st.button("Accueil"):
     st.switch_page("home.py")
 st.set_page_config(page_title="Import CSV vers MySQL")
 st.title("CSV vers MySQL")
 
 titre, path , dbName ,host , table , sql =inputs().render_inputs_file()
-
-MongoDB().ajouter_job(titre, path , dbName ,host , table , sql ,obj.collection)
-obj.executer()
-obj.display_table()
-obj.supprimer_lignes()
+if st.button("Ajouter Job"):
+    MongoDB().ajouter_job(job(titre,path,dbName,host,table,sql))
+csvFile.executer()
+commun().display_table()
+commun().supprimer_lignes()
 
 
 

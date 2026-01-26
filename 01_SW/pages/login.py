@@ -42,4 +42,4 @@ class Login:
 
 
 page = Login()
-page.render()  # ← affiche les champs comme avant
+page.render()  

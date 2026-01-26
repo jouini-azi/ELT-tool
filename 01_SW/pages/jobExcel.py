@@ -3,13 +3,15 @@ import pandas as pd
 import os
 from pymongo import MongoClient
 from datetime import datetime
-from core.db import get_connection
+from Functions.databases import Mysql
 from core.auth import require_login
 from core.session import init_session
 from core.db import generate_create_table
 from core.commun import commun
 from Functions.databases import MongoDB
 from Functions.inputs import inputs
+from pages.job import job
+
 
 
 st.set_page_config(page_title="Import Excel vers MySQL")
@@ -19,7 +21,7 @@ require_login()
 
 
 
-class excelFile(commun):
+class excelFile(job):
   def __init__(self):
     self.df = st.session_state.get("df", pd.DataFrame())
     self.selected = st.session_state.get("selected", pd.DataFrame())
@@ -36,7 +38,7 @@ class excelFile(commun):
     
     if st.button("Envoyer vers MySQL"):
         try:
-            conn = get_connection()
+            conn = Mysql().connect_to_MySQL()
             cursor = conn.cursor()
             self.path=self.path+".xls"
             if self.path:
@@ -93,17 +95,18 @@ class excelFile(commun):
 
 
 
-obj = excelFile()
+ExcelFile = excelFile()
 if st.button("Accueil"):
     st.switch_page("home.py")
 
 
 st.title("Excel vers MySQL")
-titre, path , dbName ,host , table , requette_sql = inputs().render_inputs_file()
-MongoDB().ajouter_job(titre, path , dbName ,host , table , requette_sql,obj.collection)
-obj.executer()
-obj.display_table()
-obj.supprimer_lignes()
+titre, path , dbName ,host , table , sql = inputs().render_inputs_file()
+if st.button("Ajouter Job"):
+    MongoDB().ajouter_job(job(titre,path,dbName,host,table,sql))
+ExcelFile.executer()
+commun().display_table()
+commun().supprimer_lignes()
 
 
 

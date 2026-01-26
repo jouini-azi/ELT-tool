@@ -1,12 +1,4 @@
-import mysql.connector
 
-def get_connection():
-    return mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="",
-        database="essai_app"
-    )
 
 def pandas_to_mysql(dtype):
     if "int" in str(dtype):

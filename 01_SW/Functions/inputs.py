@@ -45,3 +45,4 @@ class inputs:
         st.session_state["table"] = self.table
         st.session_state["sql"] = self.sql
         return self.titre, self.path , self.dbName ,self.host , self.table,self.sql
+  

@@ -1,8 +1,9 @@
 import streamlit as st
-from core.db import get_connection
+from Functions.databases import Mysql
+
 
 def check_user(username, password):
-    conn = get_connection()
+    conn = Mysql().connect_to_MySQL()
     cursor = conn.cursor(dictionary=True)
 
     cursor.execute(

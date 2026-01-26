@@ -1,5 +1,6 @@
 import streamlit as st
-from core.db import get_connection
+from Functions.databases import Mysql
+
 from core.auth import require_login
 from core.session import init_session
 import pandas as pd
@@ -10,7 +11,8 @@ require_login()
 
 class UserManager(commun):
     def add_user(self, username, password, role="user"):
-      conn=get_connection()
+      conn = Mysql().connect_to_MySQL()
+
       cursor = conn.cursor()
       query = f"""
                 INSERT INTO `users`(`username`, `password`, `role`)
@@ -20,7 +22,7 @@ class UserManager(commun):
 
 
     def delete_user(self, username):
-      conn=get_connection()
+      conn = Mysql().connect_to_MySQL()
       cursor = conn.cursor()
       query = f"""
                 DELETE FROM `users` WHERE username={username}
@@ -28,7 +30,7 @@ class UserManager(commun):
       cursor.execute(query)
 
     def update_user(self, username, new_password):
-      conn=get_connection()
+      conn = Mysql().connect_to_MySQL()
       cursor = conn.cursor()
       query = f"""
                 UPDATE `users` SET `password`='{new_password}' WHERE username={username}
@@ -36,7 +38,7 @@ class UserManager(commun):
       cursor.execute(query)
 
     def get_users(self):
-      conn=get_connection()
+      conn = Mysql().connect_to_MySQL()
       query = f"""SELECT * FROM users"""
       st.session_state.tab = pd.read_sql(query,conn)
       self.display_table()
