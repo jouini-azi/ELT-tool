@@ -18,6 +18,7 @@ class Gestion_hist:
         if st.button("Effacer historique"):
             self.historique.delete_many({})
             st.success("Historique effacé !")
+            st.rerun()
 
     def afficher_historique(self):
         """Affiche tous les jobs dans l'historique"""
@@ -38,6 +39,7 @@ if st.button("Accueil"):
 st.header("Historique des Jobs")
 
 hist = Gestion_hist()
-hist.afficher_historique()
 hist.effacer_historique()
+hist.afficher_historique()
+
 
