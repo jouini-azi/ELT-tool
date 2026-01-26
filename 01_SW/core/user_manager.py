@@ -40,10 +40,9 @@ class UserManager(commun):
     def get_users(self):
       conn = Mysql().connect_to_MySQL()
       query = f"""SELECT * FROM users"""
-      st.session_state.tab = pd.read_sql(query,conn)
-      self.display_table()
+      st.session_state.users = pd.read_sql(query,conn)
+      st.write(st.session_state.users)
 
-u=UserManager()
-u.get_users()
+
 
 

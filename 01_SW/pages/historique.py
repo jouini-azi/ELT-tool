@@ -22,7 +22,9 @@ class Gestion_hist:
 
     def afficher_historique(self):
         """Affiche tous les jobs dans l'historique"""
-        hist = self.historique.find()
+        hist = list(self.historique.find())
+        if not hist:
+            st.info("Aucun historique disponible !")
         for h in hist:
             with st.container(border=True):
                 st.write(f"**Titre:** {h.get('Job', '')}")

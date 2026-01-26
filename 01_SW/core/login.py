@@ -3,7 +3,7 @@ import streamlit as st
 from core.auth import check_user
 from core.session import init_session
 
-st.set_page_config(page_title="Login")  # ⚠ toujours en tout premier
+st.set_page_config(page_title="Login")  
 
 class Login:
     def __init__(self):
@@ -33,13 +33,10 @@ class Login:
             # Stocker les informations de session
             st.session_state["logged_in"] = True
             st.session_state["username"] = user["username"]
+            st.session_state["password"] = user["password"]
             st.session_state["role"] = user["role"]
 
             # Redirection vers la page d'accueil
             st.switch_page("home.py")
         else:
             st.error("Login ou mot de passe incorrect !")
-
-
-page = Login()
-page.render()  

@@ -30,7 +30,7 @@ class commun:
 
     
 
-    def supprimer_lignes(self):
+    def supprimer_lignes(self,table):
         """Supprimer les lignes sélectionnées"""
         if st.button("Supprimer lignes"):
             # Vérifier si le tableau existe et contient des lignes sélectionnées
@@ -51,7 +51,7 @@ class commun:
 
                 # Supprimer les lignes une par une
                 for _, row in self.selected.iterrows():
-                    cursor.execute(f"DELETE FROM {self.table} WHERE id = %s", (row["id"],))
+                    cursor.execute(f"DELETE FROM {table} WHERE id = %s", (row["id"],))
                 
                 conn.commit()
 
