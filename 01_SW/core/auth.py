@@ -20,4 +20,4 @@ def check_user(username, password):
 
 def require_login():
     if not st.session_state.get("logged_in"):
-        st.switch_page("pages/login_page.py")
+        st.switch_page("pages/Login.py")

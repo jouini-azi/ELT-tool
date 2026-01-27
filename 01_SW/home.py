@@ -21,15 +21,15 @@ st.markdown("---")
 col1, col2, col3,col4= st.columns(4)
 with col1:
   if st.button("Consulter les Jobs"):
-    st.switch_page("pages/listJobs.py")
+    st.switch_page("pages/List_Jobs.py")
 with col2:
   if st.session_state["role"]=="admin":
     if st.button("Créer un Job"):
-      st.switch_page('pages/JOB_new.py')
+      st.switch_page('pages/nouveau_job.py')
 with col3:
   if st.session_state["role"]=="admin":
     if st.button("Gérer les utilisateurs"):
-      st.switch_page('pages/users.py')
+      st.switch_page('pages/Utilisateurs.py')
 with col4:
   if st.button("Historique"):
     st.switch_page('pages/historique.py')

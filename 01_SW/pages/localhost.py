@@ -16,10 +16,10 @@ if st.session_state["role"]=="admin":
   col1, col2, col3, col4= st.columns([1,1,1,1])
   with col1:
     if st.button("CSV to MySQL"):
-      st.switch_page("pages/jobCSV.py")
+      st.switch_page("pages/Job_CSV.py")
   with col2:
     if st.button("Excel to MySQL"):
-      st.switch_page('pages/jobExcel.py')
+      st.switch_page('pages/Job_Excel.py')
   with col3:
     if st.button("Folder Excel to MySQL"):
       st.switch_page('pages/job_Folder_Excel.py')

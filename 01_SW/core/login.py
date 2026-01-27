@@ -44,4 +44,4 @@ class Login:
     def logout(self):
         for key in list(st.session_state.keys()):
             del st.session_state[key]
-        st.switch_page("pages/login_page.py")
+        st.switch_page("pages/Login.py")
