@@ -13,6 +13,9 @@ if st.button("Accueil"):
     st.switch_page("home.py")
 st.set_page_config(page_title="Import CSV vers MySQL")
 st.title("CSV vers MySQL")
+st.markdown("---")
+
+
 if st.session_state["role"]=="admin":
     titre, path , dbName ,host , table , sql =inputs().render_inputs_file()
     csvFile = csvFile(titre,path,dbName,host,table,sql)

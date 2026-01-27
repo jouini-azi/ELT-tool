@@ -8,7 +8,9 @@ require_login()
 st.set_page_config(page_title="Local")
 if st.button("Accueil"):
     st.switch_page("home.py")
-st.header("Local")
+st.title("Local")
+st.markdown("---")
+
 
 if st.session_state["role"]=="admin":
   col1, col2, col3, col4= st.columns([1,1,1,1])

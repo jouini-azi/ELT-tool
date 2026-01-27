@@ -11,7 +11,9 @@ require_login()
 
 if st.button("Accueil"):
     st.switch_page("home.py")
-st.header("CSV vers MySQL (dossier)")
+st.title("CSV vers MySQL (dossier)")
+st.markdown("---")
+
 
 if st.session_state["role"]=="admin":
     

@@ -7,12 +7,16 @@ init_session()
 
 if not st.session_state["role"]:
   st.title("Login")
+  st.markdown("---")
+
   page = Login()
   page.render()  
 else:
   if st.button("Accueil"):
     st.switch_page("home.py")
   st.title("Login")
+  st.markdown("---")
+
   
   st.info("Vous etes déja connecté !")
   if st.button("Déconnexion"):

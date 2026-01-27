@@ -18,6 +18,8 @@ require_login()
 if st.button("Accueil"):
     st.switch_page("home.py")
 st.title("Excel vers MySQL")
+st.markdown("---")
+
 if st.session_state["role"]=="admin":
     
     titre, path , dbName ,host , table , sql = inputs().render_inputs_file()

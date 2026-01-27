@@ -10,6 +10,8 @@ st.set_page_config(page_title="Créer Job", layout="wide")
 
 if st.button("Accueil"):
     st.switch_page("home.py")
+st.title("Créer un Job")
+st.markdown("---")
 
 if st.session_state["role"]=="admin":
   col1, col2= st.columns([1,1])

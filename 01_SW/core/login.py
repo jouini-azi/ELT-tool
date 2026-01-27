@@ -40,3 +40,8 @@ class Login:
             st.switch_page("home.py")
         else:
             st.error("Login ou mot de passe incorrect !")
+    
+    def logout(self):
+        for key in list(st.session_state.keys()):
+            del st.session_state[key]
+        st.switch_page("pages/login_page.py")

@@ -6,8 +6,6 @@ import pandas as pd
 import os
 from datetime import datetime
 from apscheduler.schedulers.background import BackgroundScheduler
-from core.auth import require_login
-from core.session import init_session
 from Functions.databases import MongoDB
 class JobManager:
     def __init__(self):

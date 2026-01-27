@@ -1,12 +1,11 @@
 import streamlit as st
-from pymongo import MongoClient
 from core.auth import require_login
 from core.session import init_session
 from Functions.databases import MongoDB
 init_session()
 require_login()
 
-st.set_page_config(page_title="Historique")
+st.set_page_config(page_title="Historique",layout="wide")
 
 class Gestion_hist:
     def __init__(self):
@@ -38,7 +37,9 @@ class Gestion_hist:
 if st.button("Accueil"):
     st.switch_page("home.py")
 
-st.header("Historique des Jobs")
+st.title("Historique des Jobs")
+st.markdown("---")
+
 
 hist = Gestion_hist()
 hist.effacer_historique()
