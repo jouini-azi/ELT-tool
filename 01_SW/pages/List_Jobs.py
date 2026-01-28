@@ -8,11 +8,10 @@ require_login()
 
 st.set_page_config(page_title="Jobs")
 if st.button("Accueil"):
-    st.switch_page("home.py")
+    st.switch_page("Accueil.py")
     
 st.title("Jobs")
 st.markdown("---")
 
 
-job_manager = JobManager()
-job_manager.display_jobs()
+JobManager().display_jobs()

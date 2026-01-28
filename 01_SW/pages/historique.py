@@ -9,7 +9,7 @@ require_login()
 st.set_page_config(page_title="Historique",layout="wide")
 
 if st.button("Accueil"):
-    st.switch_page("home.py")
+    st.switch_page("Accueil.py")
 
 st.title("Historique des Jobs")
 st.markdown("---")

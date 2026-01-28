@@ -7,9 +7,9 @@ from core.user_manager import UserManager
 init_session()
 require_login()
 
-st.set_page_config(page_title="Local")
+st.set_page_config(page_title="Profil")
 if st.button("Accueil"):
-    st.switch_page("home.py")
+    st.switch_page("Accueil.py")
 st.header("Votre profil")
 st.markdown("---")
 

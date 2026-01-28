@@ -56,21 +56,20 @@ class UserManager(commun):
         query=f"UPDATE `users` SET `username`='{new_username}' WHERE username='{old_username}'"
         cursor = conn.cursor()
         cursor.execute(query)
-        if st.session_state.get("username") == old_username:
-          st.session_state["username"]=new_username
         st.success("Username changé avec succes !")
         conn.commit()
       except Exception as e:
           st.error(e.args)
 
-    def update_password(self,old_pass, new_pass):
+    def update_password(self,username,old_pass, new_pass):
       try:
         conn=Mysql().connect_to_MySQL()
-        query=f"UPDATE `users` SET `password`='{new_pass}' WHERE username='{st.session_state["username"]}' AND password='{old_pass}'"
+        query=f"UPDATE `users` SET `password`='{new_pass}' WHERE username='{username}' AND password='{old_pass}'"
         cursor = conn.cursor()
+        if not re.match(pattern,new_pass):
+          st.warning("Mot de passe invalide: Mot de passe doit avoir 10 caractères (Majuscule, miniscule, chiffre, caractère special)")
+          return
         cursor.execute(query)
-        if st.session_state.get("password") == old_pass:
-          st.session_state["password"]=new_pass
         st.success("Mot de passe changé avec succes !")
         conn.commit()
       except Exception as e:
@@ -82,7 +81,6 @@ class UserManager(commun):
         query=f"UPDATE `users` SET `role`='{new_role}' WHERE username='{username}' AND role='{old_role}'"
         cursor = conn.cursor()
         cursor.execute(query)
-        st.session_state["role"]=new_role
         st.success("Role changé avec succes !")
         
         conn.commit()
@@ -114,14 +112,11 @@ class UserManager(commun):
                 st.rerun()
             with col2:
               save=st.button("Enregistrer les modifications",key=str(u["id"])+"e")
-            if save:
-              print("role new:",role)
-              print("role old:",st.session_state["role"])
-              
+            if save:              
               if u["username"]!=name:
                   UserManager().update_username(u["username"],name)
               if u["password"]!= password:
-                UserManager().update_password(u["password"], password)
+                UserManager().update_password(u["username"],u["password"], password)
               if u["role"]!=role:
                 UserManager().update_role(u["username"],u["role"],role)
 

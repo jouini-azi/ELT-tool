@@ -11,7 +11,7 @@ require_login()
 
 if st.button("Accueil"):
     st.switch_page("home.py")
-st.set_page_config(page_title="Import CSV vers MySQL")
+st.set_page_config(page_title="CSV vers MySQL")
 st.title("CSV vers MySQL")
 st.markdown("---")
 
@@ -22,7 +22,8 @@ if st.session_state["role"]=="admin":
 
     if st.button("Ajouter Job"):
         MongoDB().ajouter_job(csvFile)
-    csvFile.executer()
+    if st.button("Envoyer vers MySQL"):
+        csvFile.executer()
     commun().display_table()
     commun().supprimer_lignes(table=csvFile.table)
 else:

@@ -4,11 +4,11 @@ class inputs:
           """Affichage des inputs Streamlit"""
           col1, col2 = st.columns([3,1])
           with col1:
-              self.titre = st.text_input("Titre")
-              self.path = st.text_input("Path copmplet du ficher")
-              self.dbName = st.text_input("Nom de la base")
-              self.host = st.text_input("host")
-              self.table = st.text_input("Nom de la table")
+              self.titre = st.text_input("**Titre**")
+              self.path = st.text_input("**Path copmplet du ficher**")
+              self.dbName = st.text_input("**Nom de la base**","essai_app")
+              self.host = st.text_input("**Host**","localhost")
+              self.table = st.text_input("**Nom de la table**")
           with col2:
               st.title("Requetes SQL")
               self.sql = st.text_area(
@@ -27,15 +27,15 @@ class inputs:
         """Affichage des inputs Streamlit"""
         col1, col2 = st.columns([3,1])
         with col1:
-            self.titre = st.text_input("Titre")
-            self.path = st.text_input("Path copmplet du dossier")
-            self.dbName = st.text_input("Nom de la base")
-            self.host = st.text_input("host")
-            self.table = st.text_input("Nom de la table")
+            self.titre = st.text_input("**Titre**")
+            self.path = st.text_input("**Path copmplet du dossier**")
+            self.dbName = st.text_input("**Nom de la base**","essai_app")
+            self.host = st.text_input("**Host**","localhost")
+            self.table = st.text_input("**Nom de la table**")
         with col2:
             st.title("Requetes SQL")
             self.sql = st.text_area(
-                'Entrez vos requetes SQL (precedées par " - " ) ',
+                '**Entrez vos requetes SQL (precedées par " - " ) **',
                 height=260
             )
         st.session_state["titre"] = self.titre

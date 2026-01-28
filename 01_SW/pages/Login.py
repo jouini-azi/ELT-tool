@@ -9,11 +9,11 @@ if not st.session_state["role"]:
   st.title("Login")
   st.markdown("---")
 
-  page = Login()
-  page.render()  
+
+  Login().render()  
 else:
   if st.button("Accueil"):
-    st.switch_page("home.py")
+    st.switch_page("Accueil.py")
   st.title("Login")
   st.markdown("---")
 

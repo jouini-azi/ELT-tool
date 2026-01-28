@@ -24,5 +24,8 @@ class Gestion_hist:
                 st.write(f"**Date execution:** {h.get('date execution', '')}")
                 erreur = h.get('erreur', '')
                 if erreur:
-                    st.write(f"**Erreur:** {erreur}")
+                    st.error(f"**Erreur:** {erreur}")
+                else:
+                    st.success("**Succès !**")
+
 

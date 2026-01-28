@@ -7,6 +7,13 @@ import os
 from datetime import datetime
 from apscheduler.schedulers.background import BackgroundScheduler
 from Functions.databases import MongoDB
+from models.job import job_Folder_CSV
+from models.job import job_Folder_Excel
+from models.job import csvFile
+from models.job import excelFile
+
+
+
 class JobManager:
     def __init__(self):
         self.scheduler = BackgroundScheduler()
@@ -23,43 +30,56 @@ class JobManager:
     
     def executer(self, j):
         """Exécute un job sur MySQL"""
-        df = pd.DataFrame()
-        try:
-            conn = mysql.connector.connect(host=j['host'], user="root", password="", database=j['db'])
-            cursor = conn.cursor()
+        st.session_state.tab=None
+        if j['type']=="csv":
+            job_tmp=csvFile(j['titre'],j['path'],j['db'],j['host'],j['table'],j['requete'])
+            job_tmp.executer()
+        if j['type']=="excel":
+            job_tmp=excelFile(j['titre'],j['path'],j['db'],j['host'],j['table'],j['requete'])
+            job_tmp.executer()
+        if j['type']=="csv_folder":
+            job_tmp=job_Folder_CSV(j['titre'],j['path'],j['db'],j['host'],j['table'],j['requete'])
+            job_tmp.executer()
+        if j['type']=="excel_folder":
+            job_tmp=job_Folder_Excel(j['titre'],j['path'],j['db'],j['host'],j['table'],j['requete'])
+            job_tmp.executer()
+        # df = pd.DataFrame()
+        # try:
+        #     conn = mysql.connector.connect(host=j['host'], user="root", password="", database=j['db'])
+        #     cursor = conn.cursor()
 
-            # Lecture CSV
-            for f in os.listdir(j['path']):
-                if f.endswith(".csv"):
-                    df = pd.concat([df, pd.read_csv(os.path.join(j['path'], f))], ignore_index=True)
+        #     # Lecture CSV
+        #     for f in os.listdir(j['path']):
+        #         if f.endswith(".csv"):
+        #             df = pd.concat([df, pd.read_csv(os.path.join(j['path'], f))], ignore_index=True)
 
-            # Création table si elle n'existe pas
-            cursor.execute(
-                f"CREATE TABLE IF NOT EXISTS {j['table']} "
-                "(id INT AUTO_INCREMENT PRIMARY KEY, nom VARCHAR(50), prenom VARCHAR(50))"
-            )
+        #     # Création table si elle n'existe pas
+        #     cursor.execute(
+        #         f"CREATE TABLE IF NOT EXISTS {j['table']} "
+        #         "(id INT AUTO_INCREMENT PRIMARY KEY, nom VARCHAR(50), prenom VARCHAR(50))"
+        #     )
 
-            # Insertion CSV
-            for _, row in df.iterrows():
-                cursor.execute(f"INSERT INTO {j['table']} (nom, prenom) VALUES (%s, %s)", (row["nom"], row["prenom"]))
+        #     # Insertion CSV
+        #     for _, row in df.iterrows():
+        #         cursor.execute(f"INSERT INTO {j['table']} (nom, prenom) VALUES (%s, %s)", (row["nom"], row["prenom"]))
 
-            # Exécution requêtes SQL
-            for r in j['requete']:
-                if r.strip():
-                    cursor.execute(r)
+        #     # Exécution requêtes SQL
+        #     for r in j['requete']:
+        #         if r.strip():
+        #             cursor.execute(r)
 
-            conn.commit()
-        except Exception as e:
-            st.error(e.args)
-            self.historique.insert_one({"Job": j['titre'], "date execution": datetime.now(), "erreur": str(e)})
-        else:
-            st.success(f"{j['titre']} fait !")
-            self.historique.insert_one({"Job": j['titre'], "date execution": datetime.now(), "erreur": ""})
-        finally:
-            if 'conn' in locals():
-                cursor.close()
-                conn.close()
-        #st.markdown('<a href="/transform?run=1" target=_blank> Executer </a>',unsafe_allow_html=True)
+        #     conn.commit()
+        # except Exception as e:
+        #     st.error(e.args)
+        #     self.historique.insert_one({"Job": j['titre'], "date execution": datetime.now(), "erreur": str(e)})
+        # else:
+        #     st.success(f"{j['titre']} fait !")
+        #     self.historique.insert_one({"Job": j['titre'], "date execution": datetime.now(), "erreur": ""})
+        # finally:
+        #     if 'conn' in locals():
+        #         cursor.close()
+        #         conn.close()
+        # #st.markdown('<a href="/transform?run=1" target=_blank> Executer </a>',unsafe_allow_html=True)
 
     def display_jobs(self):
         """Affiche tous les jobs avec leurs options"""

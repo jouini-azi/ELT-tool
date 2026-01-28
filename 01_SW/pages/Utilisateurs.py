@@ -8,7 +8,7 @@ require_login()
 
 st.set_page_config(page_title="Gestion utilisateurs")
 if st.button("Accueil"):
-    st.switch_page("home.py")
+    st.switch_page("Accueil.py")
 st.header("Gestion utilisateurs")
 st.markdown("---")
 

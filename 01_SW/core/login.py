@@ -7,10 +7,7 @@ st.set_page_config(page_title="Login")
 
 class Login:
     def __init__(self):
-        # Initialisation de la session
         init_session()
-
-        # Attributs pour le formulaire
         self.username = ""
         self.password = ""
     
@@ -37,7 +34,7 @@ class Login:
             st.session_state["role"] = user["role"]
 
             # Redirection vers la page d'accueil
-            st.switch_page("home.py")
+            st.switch_page("Accueil.py")
         else:
             st.error("Login ou mot de passe incorrect !")
     

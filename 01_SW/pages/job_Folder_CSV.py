@@ -8,9 +8,10 @@ from models.job import job_Folder_CSV
 
 init_session()
 require_login()
+st.set_page_config(page_title="CSV vers MySQL (dossier)")
 
 if st.button("Accueil"):
-    st.switch_page("home.py")
+    st.switch_page("Accueil.py")
 st.title("CSV vers MySQL (dossier)")
 st.markdown("---")
 
@@ -22,7 +23,9 @@ if st.session_state["role"]=="admin":
 
     if st.button("Ajouter Job"):
         MongoDB().ajouter_job(csvFolder)
-    csvFolder.executer()
+        
+    if st.button("Executer"):
+        csvFolder.executer()
     commun().display_table()
     commun().supprimer_lignes(table=csvFolder.table)
 else:

@@ -2,13 +2,10 @@ import streamlit as st
 import pandas as pd
 import os
 from datetime import datetime
-from core.auth import require_login
-from core.session import init_session
-from Functions.databases import generate_create_table
+from Functions.table import table
 from core.commun import commun
 from Functions.databases import MongoDB
 from Functions.databases import Mysql
-from Functions.inputs import inputs
 
 
 class job():
@@ -41,13 +38,15 @@ class csvFile(job):
         self.host = host
         self.table = table
         self.sql = sql
+        self.type="csv"
         self.uri , self.client , self.db , self.collection , self.historique = MongoDB().connect_to_mongodb()
 
 
 
   
-    def executer(self):        
-        if st.button("Envoyer vers MySQL"):
+    def executer(self):   
+            st.session_state.tab=None
+                 
             try:
                 conn = Mysql().connect_to_MySQL()
                 cursor = conn.cursor()
@@ -56,7 +55,7 @@ class csvFile(job):
                     if os.path.exists(self.path):  # check if the path exists
                         try:
                             self.df = pd.read_csv(self.path)  # read excel
-                            st.success("Csv loaded successfully!")
+                            #st.success("Csv loaded successfully!")
                         except Exception as e:
                             st.error(f"Error reading Csv: {e}")
                     else:
@@ -65,7 +64,7 @@ class csvFile(job):
                 st.subheader("Aperçu des données")
                 st.dataframe(self.df)      
                
-                create_query = generate_create_table(self.df, self.table)
+                create_query = table().generate_create_table(self.df, self.table) 
                 cursor.execute(create_query)
                 cols = [f"`{c.replace(' ', '_')}`" for c in self.df.columns]
                 placeholders = ",".join(["%s"] * len(cols))
@@ -76,7 +75,7 @@ class csvFile(job):
                 """
                 for _, row in self.df.iterrows():
                     cursor.execute(insert_sql, tuple(row))
-                req = self.sql.split("-")[1:]
+                req = str(self.sql).split("-")[1:]
                 for r in req:
                     if r.strip():
                         cursor.execute(r)
@@ -108,12 +107,13 @@ class excelFile(job):
         self.host = host
         self.table = table
         self.sql = sql
+        self.type="excel"
         self.uri , self.client , self.db , self.collection , self.historique = MongoDB().connect_to_mongodb()
 
 
   def executer(self):
-    
-    if st.button("Envoyer vers MySQL"):
+        st.session_state.tab=None
+        
         try:
             conn = Mysql().connect_to_MySQL()
             cursor = conn.cursor()
@@ -122,7 +122,7 @@ class excelFile(job):
                 if os.path.exists(self.path):  # check if the path exists
                     try:
                         self.df = pd.read_excel(self.path)  # read excel
-                        st.success("Excel loaded successfully!")
+                        #st.success("Excel loaded successfully!")
                     except Exception as e:
                         st.error(f"Error reading Excel: {e}")
                 else:
@@ -132,7 +132,7 @@ class excelFile(job):
             st.subheader("Aperçu des données")
             st.dataframe(self.df)
             # Créer la table automatiquement
-            create_query = generate_create_table(self.df, self.table)
+            create_query = table().generate_create_table(self.df, self.table)
             cursor.execute(create_query)
 
             # Insertion des données excel
@@ -145,7 +145,7 @@ class excelFile(job):
             """
             for _, row in self.df.iterrows():
                 cursor.execute(insert_sql, tuple(row))
-            req = self.sql.split("-")[1:]
+            req = str(self.sql).split("-")[1:]
             for r in req:
                 if r.strip():
                     cursor.execute(r)
@@ -177,14 +177,13 @@ class job_Folder_CSV(job):
             self.host = host
             self.table = table
             self.sql = sql
+            self.type="csv_folder"
             self.uri , self.client , self.db , self.collection , self.historique = MongoDB().connect_to_mongodb()
     
     def executer(self):
-        """Exécuter le job"""
-        if st.button("Executer"):
+            st.session_state.tab=None
             if not (self.titre and self.path and self.dbName and self.host and self.table):
                 st.warning("Veuillez remplir tous les champs correctement !")
-                st.switch_page("pages/transform.py")
                 return
 
             try:
@@ -197,17 +196,20 @@ class job_Folder_CSV(job):
                         self.df = pd.concat([self.df, pd.read_csv(os.path.join(self.path, f))], ignore_index=True)
 
                 # Création de la table si nécessaire
-                cursor.execute(
-                    f"CREATE TABLE IF NOT EXISTS {self.table} "
-                    "(id INT AUTO_INCREMENT PRIMARY KEY, nom VARCHAR(50), prenom VARCHAR(50))"
-                )
-
+                create_query = table().generate_create_table(self.df, self.table)
+                cursor.execute(create_query)
+                cols = [f"`{c.replace(' ', '_')}`" for c in self.df.columns]
+                placeholders = ",".join(["%s"] * len(cols))
                 # Insertion des données CSV
+                insert_sql = f"""
+                INSERT INTO `{self.table}` ({",".join(cols)})
+                VALUES ({placeholders})
+                """
                 for _, row in self.df.iterrows():
-                    cursor.execute(f"INSERT INTO {self.table} (nom, prenom) VALUES (%s, %s)", (row["nom"], row["prenom"]))
+                    cursor.execute(insert_sql, tuple(row))
 
                 # Exécution des requêtes SQL
-                req = self.sql.split("-")[1:]
+                req = str(self.sql).split("-")[1:]
                 for r in req:
                     if r.strip():
                         cursor.execute(r)
@@ -240,19 +242,20 @@ class job_Folder_Excel(job):
         self.host = host
         self.table = table
         self.sql = sql
+        self.type="excel_folder"
         self.uri , self.client , self.db , self.collection , self.historique = MongoDB().connect_to_mongodb()
 
 
 
     
     def executer(self):
-      """Exécuter le job (Excel folder only)"""
-      if st.button("Executer"):
-          if not (self.titre and self.path and self.dbName and self.host and self.table):
+        st.session_state.tab=None
+          
+        if not (self.titre and self.path and self.dbName and self.host and self.table):
               st.warning("Veuillez remplir tous les champs correctement !")
               return
 
-          try:
+        try:
             conn = Mysql().connect_to_MySQL()
             cursor = conn.cursor()
               
@@ -284,17 +287,20 @@ class job_Folder_Excel(job):
                   return
 
               # Création de la table si nécessaire
-            cursor.execute(
-                  f"CREATE TABLE IF NOT EXISTS {self.table} "
-                  "(id INT AUTO_INCREMENT PRIMARY KEY, nom VARCHAR(50), prenom VARCHAR(50))"
-              )
+            create_query = table().generate_create_table(self.df, self.table)
+            cursor.execute(create_query)
 
               # Insertion des données Excel (rapide)
-            sql = f"INSERT INTO {self.table} (nom, prenom) VALUES (%s, %s)"
-            cursor.executemany(sql, self.df[["nom", "prenom"]].values.tolist())
-
+            cols = [f"`{c.replace(' ', '_')}`" for c in self.df.columns]
+            placeholders = ",".join(["%s"] * len(cols))
+            insert_sql = f"""
+            INSERT INTO `{self.table}` ({",".join(cols)})
+            VALUES ({placeholders})
+            """
+            for _, row in self.df.iterrows():
+                cursor.execute(insert_sql, tuple(row))
               # Exécution des requêtes SQL additionnelles
-            req = self.sql.split("-")[1:]
+            req = str(self.sql).split("-")[1:]
             for r in req:
                   if r.strip():
                       cursor.execute(r)
@@ -303,16 +309,17 @@ class job_Folder_Excel(job):
 
               # Chargement des données pour affichage
             tab = pd.read_sql(f"SELECT * FROM {self.table}", conn)
+            st.success("Données transférées vers MySQL avec succès !")
             tab["select"] = False
             st.session_state.tab = tab
 
             st.success(f"Job '{self.titre}' exécuté avec succès !")
             self.historique.insert_one({"Job": self.titre, "date execution": datetime.now(), "erreur": ""})
 
-          except Exception as e:
+        except Exception as e:
               st.error(f"Erreur : {e}")
               self.historique.insert_one({"Job": self.titre, "date execution": datetime.now(), "erreur": str(e)})
-          finally:
+        finally:
               if 'conn' in locals():
                   cursor.close()
                   conn.close()

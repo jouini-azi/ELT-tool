@@ -5,7 +5,7 @@ from Functions.databases import Mysql
 
 class commun:
     st.session_state.tab=pd.DataFrame()
-    st.session_state.tab["select"]=False     
+    st.session_state.tab["select"]=False
     def display_table(self):
             
             """Affichage du tableau éditable et sélection des lignes"""            

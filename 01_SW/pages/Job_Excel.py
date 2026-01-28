@@ -9,14 +9,14 @@ from models.job import excelFile
 
 
 
-st.set_page_config(page_title="Import Excel vers MySQL")
+st.set_page_config(page_title="Excel vers MySQL")
 
 init_session()
 require_login()
 
 
 if st.button("Accueil"):
-    st.switch_page("home.py")
+    st.switch_page("Accueil.py")
 st.title("Excel vers MySQL")
 st.markdown("---")
 
@@ -27,7 +27,8 @@ if st.session_state["role"]=="admin":
 
     if st.button("Ajouter Job"):
         MongoDB().ajouter_job(ExcelFile)
-    ExcelFile.executer()
+    if st.button("Executer"):
+        ExcelFile.executer()
     commun().display_table()
     commun().supprimer_lignes(table=ExcelFile.table)
 else:
