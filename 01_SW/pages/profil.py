@@ -10,7 +10,7 @@ require_login()
 st.set_page_config(page_title="Profil")
 if st.button("Accueil"):
     st.switch_page("Accueil.py")
-st.header("Votre profil")
+st.title("Votre profil")
 st.markdown("---")
 
 

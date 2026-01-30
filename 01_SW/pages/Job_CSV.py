@@ -10,7 +10,7 @@ init_session()
 require_login()
 
 if st.button("Accueil"):
-    st.switch_page("home.py")
+    st.switch_page("Accueil.py")
 st.set_page_config(page_title="CSV vers MySQL")
 st.title("CSV vers MySQL")
 st.markdown("---")
