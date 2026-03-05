@@ -99,8 +99,8 @@ class UserManager(commun):
       st.session_state.users = users
       for u in users:
          with st.expander(u['username']):
-            name=st.text_input("Nouveau username",u["username"])
-            password=st.text_input("Nouveau mot de passe",u["password"])
+            name=st.text_input("Username",u["username"])
+            password=st.text_input("Mot de passe",u["password"],type="password")
             if u["role"]=="admin":
               role=st.selectbox("Role",options=['admin','user'],index=0,key=u['id'])
             elif u["role"]=="user":

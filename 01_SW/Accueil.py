@@ -6,7 +6,7 @@ from core.login import Login
 init_session()
 require_login()
 
-st.set_page_config(page_title="Accueil",layout="wide")
+st.set_page_config(page_title="Accueil", layout="wide")
 col4,col5=st.columns([8,1])
 with col4:
   if st.button("Déconnexion"):

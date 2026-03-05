@@ -6,7 +6,7 @@ class inputs:
           with col1:
               self.titre = st.text_input("**Titre**")
               self.path = st.text_input("**Path copmplet du ficher**")
-              self.dbName = st.text_input("**Nom de la base**","essai_app")
+              self.dbName = st.text_input("**Nom de la base**","elt_tool")
               self.host = st.text_input("**Host**","localhost")
               self.table = st.text_input("**Nom de la table**")
           with col2:
@@ -29,7 +29,7 @@ class inputs:
         with col1:
             self.titre = st.text_input("**Titre**")
             self.path = st.text_input("**Path copmplet du dossier**")
-            self.dbName = st.text_input("**Nom de la base**","essai_app")
+            self.dbName = st.text_input("**Nom de la base**","elt_tool")
             self.host = st.text_input("**Host**","localhost")
             self.table = st.text_input("**Nom de la table**")
         with col2:
